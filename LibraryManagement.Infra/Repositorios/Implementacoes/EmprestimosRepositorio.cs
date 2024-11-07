@@ -9,7 +9,13 @@ using System.Threading.Tasks;
 
 namespace LibraryManagement.Infra.Repositorios.Implementacoes
 {
-    public class EmprestimosRepositorio(LibraryManagementContext context)
+    public class EmprestimosRepositorio : RepositorioGenerico<Emprestimo>, IEmprestimosRepositorio
     {
+        public EmprestimosRepositorio(LibraryManagementContext dbContext) : base(dbContext) { }
+        
+        public List<Emprestimo> ListaEmprestimosEmAtraso()
+        {
+           return _dbContext.Emprestimos.Where(e => e.DataDevolucao < DateTime.Now).ToList();
+        }
     }
 }

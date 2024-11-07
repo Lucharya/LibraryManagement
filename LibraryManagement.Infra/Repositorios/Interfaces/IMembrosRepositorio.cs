@@ -8,5 +8,6 @@ namespace LibraryManagement.Infra.Repositorios.Interfaces
 {
     public interface IMembrosRepositorio
     {
+        bool MembroEstaAtivo(Guid membroId);
     }
 }

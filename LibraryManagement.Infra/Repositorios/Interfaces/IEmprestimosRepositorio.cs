@@ -9,5 +9,6 @@ namespace LibraryManagement.Infra.Repositorios.Interfaces
 {
     public interface IEmprestimosRepositorio
     {
+        List<Emprestimo> ListaEmprestimosEmAtraso();
     }
 }

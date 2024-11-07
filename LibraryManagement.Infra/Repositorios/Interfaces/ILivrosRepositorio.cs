@@ -8,5 +8,6 @@ namespace LibraryManagement.Infra.Repositorios.Interfaces
 {
     public interface ILivrosRepositorio
     {
+        bool LivroEstaDisponivel(int livroId);
     }
 }

@@ -26,6 +26,10 @@ namespace LibraryManagement.Infra.Context
             builder.Entity<Membro>().HasKey(m => m.Id);
             builder.Entity<Emprestimo>().HasKey(e => e.Id);
 
+            builder.Entity<Livro>()
+                .Property(l => l.Disponivel)
+                .HasDefaultValue(true);
+
             builder.Entity<Emprestimo>()
                 .HasOne(l => l.Livro)
                 .WithMany(b => b.Emprestimos)

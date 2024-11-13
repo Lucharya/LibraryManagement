@@ -55,10 +55,28 @@ public class EmprestimoServiceTests
     [Fact]
     public async Task FazEmprestimo_sholdReturnError_whenLivroEmprestado()
     {
+        var livroId = Guid.NewGuid();
+        var livro = new Livro { Id = Guid.NewGuid(), Disponivel = false };
 
-        var expecteLivro= new Livro { Disponivel = false };
+        _livrosRepositorioMock.Setup(repo => repo.GetById(livroId)).ReturnsAsync(livro);
 
-        _livrosRepositorioMock.Setup(repo => repo.GetById(It.IsAny<Guid>())).Throws(new Exception("unespected error"));
+        var request = new CriarEmprestimoRequest
+        {
+            LivroId = livroId,
+            MembroId = Guid.NewGuid()
+        };
+
+        var exception = Assert.Throws<Exception>(() => _emprestimoService.FazEmprestimo(request));
+        Assert.Equal("Livro já emprestado", exception.Message);
+    }
+
+    [Fact]
+    public async Task FazEmprestimo_sholdReturnError_whenLivroInvalid()
+    {
+        var livroId = Guid.NewGuid();
+        var livro = new Livro { Id = Guid.NewGuid(), Disponivel = true };
+
+        _livrosRepositorioMock.Setup(repo => repo.GetById(livroId)).ReturnsAsync(livro);
 
         var request = new CriarEmprestimoRequest
         {
@@ -67,8 +85,27 @@ public class EmprestimoServiceTests
         };
 
         var exception = Assert.Throws<Exception>(() => _emprestimoService.FazEmprestimo(request));
-        Assert.Equal("unespected error", exception.Message);
+        Assert.Equal("Livro não encontrado", exception.Message);
+    }
 
+    [Fact]
+    public async Task FazEmprestimo_sholdReturnError_whenMembroInvalid()
+    {
+        var livroId = Guid.NewGuid();
+        var membroId = Guid.NewGuid();
+        var membro = new Membro { Id = membroId, Nome = "Teste", Ativo = true, Email = "teste@teste.com" };
+        var livro = new Livro { Id = Guid.NewGuid(), Disponivel = true };
 
+        _livrosRepositorioMock.Setup(repo => repo.GetById(livroId)).ReturnsAsync(livro);
+        _membrosRepositorioMock.Setup(repo => repo.GetById(membroId)).ReturnsAsync(membro);
+
+        var request = new CriarEmprestimoRequest
+        {
+            LivroId = livroId,
+            MembroId = Guid.NewGuid()
+        };
+
+        var exception = Assert.Throws<Exception>(() => _emprestimoService.FazEmprestimo(request));
+        Assert.Equal("Membro não encontrado ou inativo", exception.Message);
     }
 }

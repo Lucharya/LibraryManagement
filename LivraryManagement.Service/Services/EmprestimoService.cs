@@ -16,7 +16,7 @@ namespace LibraryManagement.Service.Services
         private readonly IEmprestimosRepositorio _emprestimoRepositorio;
         private readonly ILivrosRepositorio _livrosRepositorio;
         private readonly IMembrosRepositorio _membrosRepositorio;
-        public EmprestimoService(IEmprestimosRepositorio repositorio, ILivrosRepositorio livrosRepositorio, IMembrosRepositorio membrosRepositorio) 
+        public EmprestimoService(IEmprestimosRepositorio repositorio, ILivrosRepositorio livrosRepositorio, IMembrosRepositorio membrosRepositorio)
         {
             _emprestimoRepositorio = repositorio;
             _livrosRepositorio = livrosRepositorio;
@@ -57,9 +57,13 @@ namespace LibraryManagement.Service.Services
             try
             {
                 var livro = _livrosRepositorio.GetById(request.LivroId).Result;
-                if (livro is null || !livro.Disponivel)
+                if (livro is null)
                 {
-                    throw new Exception("Livro não encontrado ou já emprestado");
+                    throw new Exception("Livro não encontrado");
+                }
+                if (!livro.Disponivel)
+                {
+                    throw new Exception("Livro já emprestado");
                 }
                 var membro = _membrosRepositorio.GetById(request.MembroId).Result;
                 if (membro is not null && membro.Ativo)

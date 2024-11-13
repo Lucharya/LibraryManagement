@@ -1,5 +1,7 @@
 ﻿using LibraryManagement.Core.Entidades;
 using LibraryManagement.Infra.Repositorios.Interfaces;
+using LibraryManagement.Service.Communication.Request.Emprestimo;
+using LibraryManagement.Service.Interfaces;
 using LibraryManagement.Service.Services;
 using Moq;
 
@@ -48,5 +50,25 @@ public class EmprestimoServiceTests
         _livrosRepositorioMock.Verify(repo => repo.Update(livro), Times.Once);
         _emprestimoRepositorioMock.Verify(repo => repo.Update(emprestimo), Times.Once);
         _emprestimoRepositorioMock.Verify(repo => repo.CommitTransactionAsync(), Times.Exactly(2));
+    }
+
+    [Fact]
+    public async Task FazEmprestimo_sholdReturnError_whenLivroEmprestado()
+    {
+
+        var expecteLivro= new Livro { Disponivel = false };
+
+        _livrosRepositorioMock.Setup(repo => repo.GetById(It.IsAny<Guid>())).Throws(new Exception("unespected error"));
+
+        var request = new CriarEmprestimoRequest
+        {
+            LivroId = Guid.NewGuid(),
+            MembroId = Guid.NewGuid()
+        };
+
+        var exception = Assert.Throws<Exception>(() => _emprestimoService.FazEmprestimo(request));
+        Assert.Equal("unespected error", exception.Message);
+
+
     }
 }

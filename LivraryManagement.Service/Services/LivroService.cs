@@ -14,9 +14,11 @@ namespace LibraryManagement.Service.Services
     public class LivroService : ILivroService
     {
         private readonly ILivrosRepositorio _livroRepositorio;
-        public LivroService(ILivrosRepositorio livroRepositorio)
+        private readonly IEmprestimosRepositorio _emprestimosRepositorio;
+        public LivroService(ILivrosRepositorio livroRepositorio, IEmprestimosRepositorio emprestimosRepositorio)
         {
             _livroRepositorio = livroRepositorio;
+            this._emprestimosRepositorio = emprestimosRepositorio;
         }
 
         public async Task<Livro> CriaLivro(CriarLivroRequest request)
